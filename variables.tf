@@ -1,45 +1,32 @@
-variable "create_origin_access_identity" {
-  description = "(Optional) - Do you want to create Origin access identy"
-  type        = bool
-  default     = false
-}
-
-variable "origin_access_identities" {
-  description = "(Optional) - Map of CloudFront origin access identities (value as a comment)"
-  type        = map(string)
-  default = {
-
-  }
-}
-
 variable "create_distribution" {
-  description = "(Optional) - Do you want to create Cloudfront Distribution"
   type        = bool
+  description = "(Optional) Do you want to create Cloudfront Distribution"
   default     = true
 }
 
 variable "aliases" {
   type        = list(string)
   description = "(Optional) - Extra CNAMEs (alternate domain names), if any, for this distribution."
-  default     = null
+  default = [
+
+  ]
 }
 
 variable "comment" {
   type        = string
   description = "(Optional) - Any comments you want to include about the distribution."
-  default     = null
-}
-
-variable "default_root_object" {
-  type        = string
-  description = "(Optional) - The object that you want CloudFront to return (for example, index.html) when an end user requests the root URL."
-  default     = "index.html"
+  default     = ""
 }
 
 variable "enabled" {
   type        = bool
-  description = "(Optional) - Whether the distribution is enabled to accept end user requests for content."
-  default     = true
+  description = "(Required) - Whether the distribution is enabled to accept end user requests for content."
+}
+
+variable "is_ipv6_enabled" {
+  type        = bool
+  description = "(Optional) - Whether the IPv6 is enabled for the distribution."
+  default     = false
 }
 
 variable "http_version" {
@@ -48,10 +35,52 @@ variable "http_version" {
   default     = "http2"
 }
 
-variable "is_ipv6_enabled" {
-  type        = bool
-  description = "(Optional) - Whether the IPv6 is enabled for the distribution."
-  default     = null
+variable "variable_name" {
+  description = "description"
+  default     = "default"
+}
+
+variable "logging_config" {
+  type        = map(string)
+  description = "(Optional) - The logging configuration that controls how logs are written to your distribution (maximum one)."
+  default = {
+
+  }
+}
+
+
+variable "custom_error_response" {
+  type        = any
+  description = "(Optional) - One or more custom error response elements (multiples allowed)."
+  default = [
+
+  ]
+}
+
+variable "default_cache_behavior" {
+  type        = any
+  description = "(Required) - The default cache behavior for this distribution (maximum one)."
+}
+
+variable "ordered_cache_behavior" {
+  type        = any
+  description = "(Optional) - An ordered list of cache behaviors resource for this distribution. List from top to bottom in order of precedence. The topmost cache behavior will have precedence 0."
+  default = [
+
+  ]
+}
+
+variable "origin" {
+  type        = any
+  description = "(Required) - One or more origins for this distribution (multiples allowed)."
+}
+
+variable "origin_group" {
+  type        = any
+  description = "(Optional) - One or more origin_group for this distribution (multiples allowed)."
+  default = [
+
+  ]
 }
 
 variable "price_class" {
@@ -60,84 +89,44 @@ variable "price_class" {
   default     = "PriceClass_100"
 }
 
+variable "geo_restriction" {
+  type        = any
+  description = "(Required) - The restriction configuration for this distribution (maximum one)."
+  default = {
+
+  }
+}
+
+variable "tags" {
+  type        = map(string)
+  description = "(Optional) A map of tags to assign to the resource."
+  default = {
+
+  }
+}
+
+variable "viewer_certificate" {
+  type        = map(string)
+  description = "(Required) - The SSL configuration for this distribution (maximum one)."
+  default = {
+    minimum_protocol_version = "TLSv1.2"
+  }
+}
+
+variable "web_acl_id" {
+  type        = string
+  description = "Optional) - A unique identifier that specifies the AWS WAF web ACL, if any, to associate with this distribution."
+  default     = null
+}
 
 variable "retain_on_delete" {
   type        = bool
-  description = "(Optional) - Disables the distribution instead of deleting it when destroying the resource through Terraform. If this is set, the distribution needs to be deleted manually afterwards."
+  description = "(Optional) - Disables the distribution instead of deleting it when destroying the resource through Terraform. If this is set, the distribution needs to be deleted manually afterwards. Default: false."
   default     = false
 }
 
 variable "wait_for_deployment" {
   type        = bool
-  description = "(Optional) - If enabled, the resource will wait for the distribution status to change from InProgress to Deployed. Setting this tofalse will skip the process."
+  description = "(Optional) - If enabled, the resource will wait for the distribution status to change from InProgress to Deployed. Setting this tofalse will skip the process. Default: true."
   default     = true
-}
-
-variable "web_acl_id" {
-  type        = string
-  description = "(Optional) - If you're using AWS WAF to filter CloudFront requests, the Id of the AWS WAF web ACL that is associated with the distribution. The WAF Web ACL must exist in the WAF Global (CloudFront) region and the credentials configuring this argument must have waf:GetWebACL permissions assigned. If using WAFv2, provide the ARN of the web ACL."
-  default     = null
-}
-
-variable "tags" {
-  type        = map(string)
-  description = "(Optional) - A map of tags to assign to the resource."
-  default = {
-
-  }
-}
-
-variable "logging_config" {
-  description = "(Optional) - The logging configuration that controls how logs are written to your distribution (maximum one)."
-  type        = any
-  default = {
-
-  }
-}
-
-variable "origin" {
-  description = "One or more origins for this distribution (multiples allowed)."
-  type        = any
-  default = {
-
-  }
-}
-
-variable "origin_group" {
-  description = "One or more origin_group for this distribution (multiples allowed)."
-  type        = any
-  default = {
-
-  }
-}
-
-variable "cache_behavior" {
-  description = "The map of cache behaviors for this distribution. Key `default` will be used as the default cache behavior, all other keys will be used as ordered list of cache behaviors. List from top to bottom in order of precedence. The topmost cache behavior will have precedence 0."
-  type        = any
-  default     = null
-}
-
-variable "viewer_certificate" {
-  description = "The SSL configuration for this distribution"
-  type        = any
-  default = {
-    cloudfront_default_certificate = true
-    minimum_protocol_version       = "TLSv1"
-  }
-}
-
-variable "custom_error_response" {
-  description = "One or more custom error response elements"
-  type        = any
-  default = {
-
-  }
-}
-
-variable "geo_restriction" {
-  description = "The restriction configuration for this distribution (geo_restrictions)"
-  type        = any
-  default = {
-
-  }
 }
